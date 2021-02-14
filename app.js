@@ -2,16 +2,15 @@ const imagesArea = document.querySelector('.images');
 const gallery = document.querySelector('.gallery');
 const galleryHeader = document.querySelector('.gallery-header');
 const searchBtn = document.getElementById('search-btn');
+const searchField = document.getElementById('search');
 const sliderBtn = document.getElementById('create-slider');
 const sliderContainer = document.getElementById('sliders');
 // selected image 
 let sliders = [];
 
 
-// If this key doesn't work
-// Find the name in the url and go to their website
-// to create your own api key
-const KEY = '15674931-a9d714b6e9d654524df198e00&q';
+// Api Key
+const KEY = '17966846-353eaf56f4e98c252fc154251';
 
 // show images 
 const showImages = (images) => {
@@ -29,9 +28,9 @@ const showImages = (images) => {
 }
 
 const getImages = (query) => {
-  fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
+  fetch(`https://pixabay.com/api/?key=${KEY}&q=${query}&image_type=photo`)
     .then(response => response.json())
-    .then(data => showImages(data.hitS))
+    .then(data => showImages(data.hits))
     .catch(err => console.log(err))
 }
 
@@ -47,6 +46,7 @@ const selectItem = (event, img) => {
     alert('Hey, Already added !')
   }
 }
+
 var timer
 const createSlider = () => {
   // check slider image length
@@ -68,14 +68,18 @@ const createSlider = () => {
   // hide image aria
   imagesArea.style.display = 'none';
   const duration = document.getElementById('duration').value || 1000;
-  sliders.forEach(slide => {
-    let item = document.createElement('div')
-    item.className = "slider-item";
-    item.innerHTML = `<img class="w-100"
-    src="${slide}"
-    alt="">`;
-    sliderContainer.appendChild(item)
-  })
+  if (duration > 0) {
+    sliders.forEach(slide => {
+      let item = document.createElement('div')
+      item.className = "slider-item";
+      item.innerHTML = `<img class="w-100"
+      src="${slide}"
+      alt="">`;
+      sliderContainer.appendChild(item)
+    })
+  } else {
+    alert('Sorry negative value is not allowed in slider.');
+  }
   changeSlide(0)
   timer = setInterval(function () {
     slideIndex++;
@@ -116,6 +120,12 @@ searchBtn.addEventListener('click', function () {
   getImages(search.value)
   sliders.length = 0;
 })
+
+searchField.addEventListener("keypress", function(event) {
+  if (event.key == 'Enter') {
+    searchBtn.click();
+  }
+});
 
 sliderBtn.addEventListener('click', function () {
   createSlider()
